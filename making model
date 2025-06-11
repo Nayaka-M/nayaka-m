@@ -1,0 +1,70 @@
+Applying Machine Learning Models
+import numpy as np
+import pandas as pd
+import itertools
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix
+from datetime import datetime
+
+from sklearn import linear_model
+from sklearn import metrics
+
+from sklearn.model_selection import GridSearchCV
+from sklearn.svm import LinearSVC
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
+Loading Data form File
+
+train = pd.read_csv('UCI_HAR_dataset/csv_files/train.csv')
+test = pd.read_csv('UCI_HAR_dataset/csv_files/test.csv')
+print(train.shape, test.shape)
+(7352, 564) (2947, 564)
+train.head(2)
+Making Data for Model
+X_train = train.drop(['subject', 'Activity', 'ActivityName'], axis=1)
+y_train = train.ActivityName
+
+X_test = test.drop(['subject', 'Activity', 'ActivityName'], axis=1)
+y_test = test.ActivityName
+
+print('X_train and y_train : ({},{})'.format(X_train.shape, y_train.shape))
+print('X_test  and y_test  : ({},{})'.format(X_test.shape, y_test.shape))
+X_train and y_train : ((7352, 561),(7352,))
+X_test  and y_test  : ((2947, 561),(2947,))
+Let's start modeling with our Dataset
+
+Labels that are useful in plotting confusion matrix
+labels=['LAYING', 'SITTING','STANDING','WALKING','WALKING_DOWNSTAIRS','WALKING_UPSTAIRS']
+Let's make a function to plot the confusion matrix
+plt.rcParams["font.family"] = 'DejaVu Sans'
+
+def plot_confusion_matrix(cm, classes,
+                          normalize=False,
+                          title='Confusion matrix',
+                          cmap=plt.cm.Blues):
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(len(classes))
+    plt.xticks(tick_marks, classes, rotation=90)
+    plt.yticks(tick_marks, classes)
+
+    fmt = '.2f' if normalize else 'd'
+    thresh = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        plt.text(j, i, format(cm[i, j], fmt),
+                 horizontalalignment="center",
+                 color="white" if cm[i, j] > thresh else "black")
+
+    plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+Let's 
+tBodyAcc-mean()-X	tBodyAcc-mean()-Y	tBodyAcc-mean()-Z	tBodyAcc-std()-X	tBodyAcc-std()-Y	tBodyAcc-std()-Z	tBodyAcc-mad()-X	tBodyAcc-mad()-Y	tBodyAcc-mad()-Z	tBodyAcc-max()-X	...	angle(tBodyAccMean,gravity)	angle(tBodyAccJerkMean),gravityMean)	angle(tBodyGyroMean,gravityMean)	angle(tBodyGyroJerkMean,gravityMean)	angle(X,gravityMean)	angle(Y,gravityMean)	angle(Z,gravityMean)	subject	Activity	ActivityName
+0	0.288585	-0.020294	-0.132905	-0.995279	-0.983111	-0.913526	-0.995112	-0.983185	-0.923527	-0.934724	...	-0.112754	0.030400	-0.464761	-0.018446	-0.841247	0.179941	-0.058627	1	5	STANDING
+1	0.278419	-0.016411	-0.123520	-0.998245	-0.975300
